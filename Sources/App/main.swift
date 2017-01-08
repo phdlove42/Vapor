@@ -1,6 +1,32 @@
 import Vapor
+import VaporPostgreSQL
 
-let drop = Droplet()
+let drop = Droplet(
+    providers: [VaporPostgreSQL.Provider.self]
+)
+
+drop.get("version") { request in
+    if let db = drop.database?.driver as? PostgreSQLDriver {
+        let version = try db.raw("SELECT version()")
+        return try JSON(node: version)
+    } else {
+        return "No db connection"
+    }
+}
+
+drop.get("template", String.self) { request, name in
+    return try drop.view.make("hello", Node(node: ["name" : name]))
+}
+
+drop.get("template2") { request in
+    let users = try [
+        ["name" : "Taylor", "email" : "phdlove42@gmail.com"].makeNode(),
+        ["name" : "Clif", "email" : "phdlove42@gmail.com"].makeNode(),
+        ["name" : "Shauna", "email" : "phdlove42@gmail.com"].makeNode(),
+        ["name" : "Tim", "email" : "phdlove42@gmail.com"].makeNode()
+        ].makeNode()
+    return try drop.view.make("hello2", Node(node: ["users" : users]))
+}
 
 drop.get { request in
     //return "Hello Vapor!!"
