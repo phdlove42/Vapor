@@ -2,8 +2,20 @@
 <html>
 <head>
     #import("head")
+    <title>TIL</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/styles/skeleton/skeleton.css">
+    <link rel="stylesheet" href="/styles/skeleton/normalize.css">
+    <link href="//fonts.googleapis.com/css?famile=Raleway:400,300,600" rel="stylesheet">
 </head>
     <body>
-        #import("body")
+        <div class="container">
+            <div class="row">
+                <div class="u-full-width">
+                    <h2>TIL: Today I Learned <small>A Vapor Web Service</small></h2>
+                </div>
+            </div>
+            #import("body")
+        </div>
     </body>
 </html>

@@ -1,9 +1,22 @@
 import Vapor
 import VaporPostgreSQL
 
-let drop = Droplet(
-    providers: [VaporPostgreSQL.Provider.self]
-)
+
+let drop = Droplet()
+try drop.addProvider(VaporPostgreSQL.Provider)
+drop.preparations += Acronym.self
+
+(drop.view as? LeafRenderer)?.stem.cache = nil
+
+
+let basic = BasicAcronym()
+let til = TILControler()
+
+til.addRoutes(drop: drop)
+basic.addRoutes(drop: drop)
+
+let acronymsResource = AcronymsController()
+drop.resource("acronyms", acronymsResource)
 
 drop.get("version") { request in
     if let db = drop.database?.driver as? PostgreSQLDriver {
@@ -14,6 +27,12 @@ drop.get("version") { request in
     }
 }
 
+drop.get("model") { request in
+    let acronym = Acronym(short: "AFK", long: "Away From Keyboard")
+    return try acronym.makeJSON()
+}
+
+//TEMPLATING ROUTES
 drop.get("template", String.self) { request, name in
     return try drop.view.make("hello", Node(node: ["name" : name]))
 }
@@ -28,6 +47,7 @@ drop.get("template2") { request in
     return try drop.view.make("hello2", Node(node: ["users" : users]))
 }
 
+//DEMO ROUTES
 drop.get { request in
     //return "Hello Vapor!!"
     return try JSON(node: [
