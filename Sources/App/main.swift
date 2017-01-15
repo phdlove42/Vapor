@@ -4,7 +4,7 @@ import VaporPostgreSQL
 
 let drop = Droplet()
 try drop.addProvider(VaporPostgreSQL.Provider)
-drop.preparations += Acronym.self
+drop.preparations.append(Acronym.self)
 
 (drop.view as? LeafRenderer)?.stem.cache = nil
 
